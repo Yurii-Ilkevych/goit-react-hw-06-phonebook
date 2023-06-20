@@ -1,12 +1,32 @@
-import PropTypes from 'prop-types';
 import { Wrapper, List, Item, WrapperItem, Delete } from './ContactList.styled';
-const ContactList = ({ contacts, onDell }) => {
+import { useSelector } from 'react-redux';
+import { getFilterValue } from '../redux/filter/selectors';
+import { getContacts } from '../redux/contacts/selectors';
+import { useDispatch } from 'react-redux';
+import { deleteContact } from '../redux/filter/actions';
+
+const ContactList = () => {
+  const dispatch = useDispatch();
+
+  const getVisibleContacts = (filterValue, contacts) => {
+    const normalizeFilter = filterValue.toLowerCase();
+    const filterContact = contacts.filter(({ name }) =>
+      name.toLowerCase().includes(normalizeFilter)
+    );
+    return filterContact;
+  };
+  const filterValue = useSelector(getFilterValue);
+  const contacts = useSelector(getContacts);
+  const visibleContacts = getVisibleContacts(filterValue, contacts);
+
+  const hundleContact = contactId => dispatch(deleteContact(contactId))
+
   return (
     <div>
-      {contacts.length > 0 && (
+      {visibleContacts.length > 0 && (
         <Wrapper>
           <List>
-            {contacts.map(contact => {
+            {visibleContacts.map(contact => {
               return (
                 <WrapperItem key={contact.id}>
                   <Item>
@@ -15,7 +35,7 @@ const ContactList = ({ contacts, onDell }) => {
                   <Delete
                     type="button"
                     onClick={() => {
-                      onDell(contact.id);
+                      hundleContact(contact.id);
                     }}
                   >
                     Delete
@@ -31,13 +51,3 @@ const ContactList = ({ contacts, onDell }) => {
 };
 export default ContactList;
 
-ContactList.propTypes = {
-  contacts: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      number: PropTypes.string.isRequired,
-    })
-  ),
-  onDell: PropTypes.func.isRequired,
-};

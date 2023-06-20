@@ -1,6 +1,24 @@
-import PropTypes from 'prop-types';
+import { useState } from 'react';
 import { Wrapper, Search } from './Filter.styled';
-const Filter = ({onSearch, searchName}) => {
+import { useDispatch } from 'react-redux';
+import { searchContact } from '../redux/filter/actions';
+
+const Filter = () => {
+const [value, setValue] = useState("")
+
+const dispatch = useDispatch();
+
+const handleValue = evt => {
+  const { value } = evt.currentTarget;
+setValue(value)
+
+dispatch(searchContact(value))
+
+  }
+
+
+
+
     return (
       <Wrapper>
         <label>
@@ -8,8 +26,8 @@ const Filter = ({onSearch, searchName}) => {
           <Search
             name="text"
             type="text"
-            value={searchName}
-            onChange={onSearch}
+            value={value}
+            onChange={handleValue}
           ></Search>
         </label>
         </Wrapper>
@@ -17,8 +35,3 @@ const Filter = ({onSearch, searchName}) => {
     }
 
 export default Filter;
-
-Filter.propTypes = {
-  searchName: PropTypes.string.isRequired,
-  onSearch: PropTypes.func.isRequired
-}
