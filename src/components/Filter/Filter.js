@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Wrapper, Search } from './Filter.styled';
 import { useDispatch } from 'react-redux';
-import { searchContact } from '../redux/filter/actions';
+import { searchContact} from "../redux/filterSlice"
 
 const Filter = () => {
 const [value, setValue] = useState("")
@@ -12,7 +12,7 @@ const handleValue = evt => {
   const { value } = evt.currentTarget;
 setValue(value)
 
-dispatch(searchContact(value))
+dispatch(searchContact(value.toString()))
 
   }
 

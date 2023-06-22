@@ -2,13 +2,16 @@ import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Form, Name, Number, Submit, Wrapper } from './ContactForm.styled';
 import { useDispatch } from 'react-redux';
-import { addContact } from '../redux/contacts/actions';
+import { addContact } from 'components/redux/contactsSlice';
+import { useSelector } from 'react-redux';
+import {  getContacts } from '../redux/selectors';
 
 function ContactForm() {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
-
+  const addedContacts = useSelector(getContacts)
   const dispatch = useDispatch();
+
 
   const hundleSubmit = evt => {
     evt.preventDefault();
@@ -18,9 +21,26 @@ function ContactForm() {
       name,
       number,
     };
+    
+     const addcontacts = getAddedContacts(addedContacts)
+
+    if(addcontacts !== null && addcontacts.length !== 0){
+    for (const addcontact of addcontacts) {
+      if (addcontact.name.includes(contact.name)) {
+        alert(`${contact.name} "is already in contacts"`);
+        return;
+      }
+    }
+    }
+    
     dispatch(addContact(contact))
     resetValue();
   };
+
+  const getAddedContacts = (addedContacts)=>{
+    return addedContacts
+  }
+  
 
   const handleValue = evt => {
     const { name, value } = evt.currentTarget;

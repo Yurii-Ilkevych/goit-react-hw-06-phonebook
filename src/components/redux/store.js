@@ -1,40 +1,28 @@
-import { createStore } from 'redux';
-import { devToolsEnhancer } from '@redux-devtools/extension';
-import { filter } from './filter/constants';
-import { contacts } from './contacts/constants';
-const initialState = {
-  contacts,
-  filter,
-};
+import { configureStore } from "@reduxjs/toolkit";
+import { filterReducer } from "./filterSlice";
+import { contactsReducer } from "./contactsSlice";
+import { persistStore, persistReducer } from 'redux-persist'
+import storage from 'redux-persist/lib/storage'
+import { combineReducers } from "@reduxjs/toolkit";
+import thunk from 'redux-thunk';
 
-const rootReducer = (state = initialState, action) => {
-  console.log(action);
-  console.log(...state.contacts);
-  // console.log(action.payload.contact)
-
-  switch (action.type) {
-    case 'contact/addContact':
-      console.log(action.payload.contact);
-      return {
-        ...state,
-        contacts: [...state.contacts, action.payload.contact],
-      };
-
-    case 'filter/deleteContact':
-      return {
-        ...state,
-        contacts: state.contacts.filter(
-          contact => contact.id !== action.payload
-        ),
-      };
-
-    case 'filter/searchContact':
-      return { ...state, filter: action.payload };
-
-    default:
-      return state;
+const persistConfig = {
+    key: 'contacts',
+    storage,
+    blacklist: ['filter']
   }
-};
-const enhancer = devToolsEnhancer();
+const rootReducer = combineReducers({ 
+    filter: filterReducer,
+    contacts: contactsReducer
+  })
 
-export const store = createStore(rootReducer, enhancer);
+  const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+  export const store = configureStore({
+    reducer: persistedReducer,
+    middleware: [thunk]
+  })
+export const persistor = persistStore(store)
+
+
+

@@ -1,20 +1,24 @@
 import { Wrapper, List, Item, WrapperItem, Delete } from './ContactList.styled';
 import { useSelector } from 'react-redux';
-import { getFilterValue } from '../redux/filter/selectors';
-import { getContacts } from '../redux/contacts/selectors';
+import { getFilterValue, getContacts } from '../redux/selectors';
 import { useDispatch } from 'react-redux';
-import { deleteContact } from '../redux/filter/actions';
+import { deleteContact } from 'components/redux/contactsSlice';
 
 const ContactList = () => {
   const dispatch = useDispatch();
 
   const getVisibleContacts = (filterValue, contacts) => {
+if(contacts.length === 0){
+  return 0
+}
     const normalizeFilter = filterValue.toLowerCase();
     const filterContact = contacts.filter(({ name }) =>
       name.toLowerCase().includes(normalizeFilter)
     );
     return filterContact;
   };
+
+
   const filterValue = useSelector(getFilterValue);
   const contacts = useSelector(getContacts);
   const visibleContacts = getVisibleContacts(filterValue, contacts);
